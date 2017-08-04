@@ -33,6 +33,7 @@ val COMPILE_DAEMON_PORTS_RANGE_START: Int = 17001
 val COMPILE_DAEMON_PORTS_RANGE_END: Int = 18000
 val COMPILE_DAEMON_ENABLED_PROPERTY: String = "kotlin.daemon.enabled"
 val COMPILE_DAEMON_JVM_OPTIONS_PROPERTY: String = "kotlin.daemon.jvm.options"
+val COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH: String = "kotlin.daemon.custom.run.files.path"
 val COMPILE_DAEMON_OPTIONS_PROPERTY: String = "kotlin.daemon.options"
 val COMPILE_DAEMON_CLIENT_ALIVE_PATH_PROPERTY: String = "kotlin.daemon.client.alive.path"
 val COMPILE_DAEMON_LOG_PATH_PROPERTY: String = "kotlin.daemon.log.path"
@@ -225,8 +226,9 @@ data class DaemonOptions(
 
 // TODO: consider implementing generic approach to it or may be replace getters with ones returning default if necessary
 val DaemonOptions.runFilesPathOrDefault: String
-    get() = if (runFilesPath.isBlank()) COMPILE_DAEMON_DEFAULT_RUN_DIR_PATH else runFilesPath
-
+    get() = System.getProperty(COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH)
+            ?: runFilesPath.takeUnless { it.isBlank() }
+            ?: COMPILE_DAEMON_DEFAULT_RUN_DIR_PATH
 
 fun Iterable<String>.distinctStringsDigest(): ByteArray =
         MessageDigest.getInstance(CLASSPATH_ID_DIGEST)
