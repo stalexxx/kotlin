@@ -43,7 +43,7 @@ object CacheResetOnProcessCanceled {
     private const val DEFAULT_VALUE = true
 
     var enabled: Boolean
-        get() = PropertiesComponent.getInstance()?.getBoolean(PROPERTY, DEFAULT_VALUE) != false
+        get() = PropertiesComponent.getInstance()?.getBoolean(PROPERTY, DEFAULT_VALUE) ?: DEFAULT_VALUE
         set(value) {
             PropertiesComponent.getInstance()?.setValue(PROPERTY, value, DEFAULT_VALUE)
         }
