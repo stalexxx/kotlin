@@ -243,7 +243,7 @@ class ConstantExpressionEvaluator(
             trace: BindingTrace,
             expectedType: KotlinType? = TypeUtils.NO_EXPECTED_TYPE
     ): CompileTimeConstant<*>? {
-        val visitor = ConstantExpressionEvaluatorVisitor(this, module.builtIns, trace)
+        val visitor = ConstantExpressionEvaluatorVisitor(this, trace)
         val constant = visitor.evaluate(expression, expectedType) ?: return null
 
         return if (!constant.isError) constant else null
@@ -278,9 +278,10 @@ private val DIVISION_OPERATION_NAMES =
 
 private class ConstantExpressionEvaluatorVisitor(
         private val constantExpressionEvaluator: ConstantExpressionEvaluator,
-        private val builtIns: KotlinBuiltIns,
         private val trace: BindingTrace
 ) : KtVisitor<CompileTimeConstant<*>?, KotlinType>() {
+    private val builtIns = constantExpressionEvaluator.module.builtIns
+
     fun evaluate(expression: KtExpression, expectedType: KotlinType?): CompileTimeConstant<*>? {
         val recordedCompileTimeConstant = ConstantExpressionEvaluator.getPossiblyErrorConstant(expression, trace.bindingContext)
         if (recordedCompileTimeConstant != null) {
