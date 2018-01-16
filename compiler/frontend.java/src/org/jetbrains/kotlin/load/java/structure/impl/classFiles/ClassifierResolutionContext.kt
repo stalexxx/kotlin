@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.org.objectweb.asm.Type
 
 typealias ClassIdToJavaClass = (ClassId) -> JavaClass?
 
@@ -118,5 +119,5 @@ class ClassifierResolutionContext private constructor(
 
     internal fun resolveByInternalName(c: String) = resolveClass(mapInternalNameToClassId(c))
 
-    internal fun mapDescToClassId(desc: String): ClassId = mapInternalNameToClassId(desc.removePrefix("L").removeSuffix(";"))
+    internal fun mapDescToClassId(desc: String): ClassId = mapInternalNameToClassId(Type.getType(desc).internalName)
 }
