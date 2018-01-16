@@ -94,7 +94,7 @@ class MultiplatformGradleIT : BaseGradleIT() {
 
             // Make sure there is a plugin applied with the plugins DSL, so that Gradle loads the
             // plugins separately for the subproject, with a different class loader:
-            File(projectDir, "libJs/build.gradle").modify {
+            File(projectDir, "libAndroid/build.gradle").modify {
                 "plugins { id 'com.moowork.node' version '1.0.1' }" + "\n" + it
             }
 
@@ -105,7 +105,7 @@ class MultiplatformGradleIT : BaseGradleIT() {
             }
 
             // Instead, add the dependencies directly to the subprojects buildscripts:
-            listOf("lib", "libJvm", "libJs").forEach { subDirectory ->
+            listOf("lib", "libJvm", "libAndroid").forEach { subDirectory ->
                 File(projectDir, "$subDirectory/build.gradle").modify {
                     """
                     buildscript {
@@ -127,7 +127,7 @@ class MultiplatformGradleIT : BaseGradleIT() {
     @Test
     fun testNonIncrementalCompileByDefault(): Unit = Project("multiplatformProject", GRADLE_VERSION).run {
         val compileCommonTask = ":lib:compileKotlinCommon"
-        val compileJsTask = ":libJs:compileKotlin2Js"
+        val compileJsTask = ":libAndroid:compileKotlin2Js"
         val compileJvmTask = ":libJvm:compileKotlin"
         val allKotlinTasks = listOf(compileCommonTask, compileJsTask, compileJvmTask)
 
@@ -150,7 +150,7 @@ class MultiplatformGradleIT : BaseGradleIT() {
             assertTasksUpToDate(listOf(compileCommonTask, compileJsTask))
         }
 
-        val jsProjectDir = File(projectDir, "libJs")
+        val jsProjectDir = File(projectDir, "libAndroid")
         jsProjectDir.getFileByName("PlatformClass.kt").modify { it + "\n" }
         build("build") {
             assertSuccessful()
